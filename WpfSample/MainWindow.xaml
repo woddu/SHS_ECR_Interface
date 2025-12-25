@@ -1,0 +1,595 @@
+﻿<Window x:Class="WpfSample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfSample"
+        mc:Ignorable="d"
+        Title="ECR Interface"
+        Height="600" Width="1100"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        WindowStartupLocation="CenterScreen"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Icon="pack://application:,,,/icons/appico.ico">
+        <Window.Resources>            
+            <local:IndexToActivityLabelConverter x:Key="IndexToActivityLabelConverter" />            
+            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}"> <Setter Property="HorizontalContentAlignment" Value="Center"/> <Setter Property="VerticalContentAlignment" Value="Center"/> </Style>
+        </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions> 
+            <RowDefinition Height="Auto"/> 
+            <RowDefinition Height="*"/> 
+        </Grid.RowDefinitions>
+        <ui:ProgressBar x:Name="progressBarMain" 
+            IsIndeterminate="True" 
+            Visibility="Collapsed" 
+            VerticalAlignment="Top" 
+            Margin="10"/>
+        
+        <TabControl Grid.Row="1" TabStripPlacement="Left">
+            <TabItem Height="42">
+
+                <TabItem.Header> 
+                    <TextBlock Text="File" FontSize="16"/> 
+                </TabItem.Header>
+
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock 
+                        x:Name="txtFileName" 
+                        Text="Choose an Excel file" 
+                        TextAlignment="Center"
+                        FontSize="28"/>
+                    <Button Content="Choose File" 
+                        Click="File_Click" 
+                        HorizontalAlignment="Stretch"
+                        FontSize="24" 
+                        Margin="10"/>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem x:Name="tabHighestScores"  Height="42">
+                <TabItem.Header> 
+                    <TextBlock Text="Highest Scores" FontSize="16"/> 
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>  
+                    <DockPanel Grid.Row="0" LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center"> 
+                            <TextBlock Text="Exam" 
+                                        FontWeight="Bold"
+                                        FontSize="16"
+                                        Margin="15,10,0,10"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"/>
+                            <TextBox x:Name="txtExam_1" 
+                                    PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
+                                    Text="{Binding HighestExam_1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    LostFocus="TextExam1_LostFocus"
+                                    PreviewKeyDown="HighestExam1_PreviewKeyDown"
+                                    Margin="10"/>
+                            <TextBox x:Name="txtExam_2" 
+                                    PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
+                                    Visibility="Collapsed"
+                                    Text="{Binding HighestExam_2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    LostFocus="TextExam2_LostFocus"
+                                    PreviewKeyDown="HighestExam2_PreviewKeyDown"
+                                    Margin="10"/>
+                        </StackPanel> 
+                        <ui:ToggleSwitch x:Name="tsHSQuarter"
+                                        IsOn="True" 
+                                        OnContent="1st"
+                                        OffContent="2nd"
+                                        Toggled="QuarterSwitch_Toggled"
+                                        DockPanel.Dock="Right" 
+                                        Margin="10"/> 
+                    </DockPanel>
+                    <UniformGrid Grid.Row="1" Rows="2" >
+                        <Border
+                            x:Name="bdHighestWW_1"
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>  
+                                <StackPanel>
+                                    <TextBox Text="Written Works" FontWeight="Bold" FontSize="16"/>
+                                </StackPanel>
+
+                                <ItemsControl
+                                    Grid.Row="1"
+                                    AlternationCount="1000"
+                                    Margin="4"
+                                    ItemsSource="{Binding HighestWW_1}">   
+
+                                    <!-- Change ItemsPanel to UniformGrid -->
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="2" Columns="5"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical" 
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="5"
+                                                    >                                                
+                                                <TextBlock Text="{Binding
+                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                AncestorType=ContentPresenter},
+                                                    Path=(ItemsControl.AlternationIndex),
+                                                    Converter={StaticResource IndexToActivityLabelConverter}}"
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                    Path=(ItemsControl.AlternationIndex)}"
+                                                    />                                                            
+
+                                                <TextBox
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                            Path=(ItemsControl.AlternationIndex)}"
+                                                    Text="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    VerticalAlignment="Top"
+                                                    AcceptsReturn="True"                 
+                                                    TextWrapping="Wrap"
+                                                    Width="70"
+                                                    PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
+                                                    MaxLength="2"
+                                                    LostFocus="TextBoxWW1_LostFocus"
+                                                    PreviewKeyDown="HighestScoreWW1_PreviewKeyDown"/>
+                                                    
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                
+                            </Grid>
+                        </Border>
+                        <Border
+                            x:Name="bdHighestPT_1"
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>  
+                                <StackPanel>
+                                    <TextBox Text="Performance Tasks" FontWeight="Bold" FontSize="16"/>
+                                </StackPanel>
+                                <ItemsControl                                    
+                                    Grid.Row="1"
+                                    AlternationCount="1000"
+                                    Margin="4"
+                                    ItemsSource="{Binding HighestPT_1}">   
+
+                                    <!-- Change ItemsPanel to UniformGrid -->
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="2" Columns="5"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical" 
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="5"
+                                                    >                                                
+                                                <TextBlock Text="{Binding
+                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                AncestorType=ContentPresenter},
+                                                    Path=(ItemsControl.AlternationIndex),
+                                                    Converter={StaticResource IndexToActivityLabelConverter}}"
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                    Path=(ItemsControl.AlternationIndex)}"
+                                                    />                                                            
+                                               
+                                                <TextBox
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                            Path=(ItemsControl.AlternationIndex)}"
+                                                    Text="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    VerticalAlignment="Top"
+                                                    AcceptsReturn="True"                 
+                                                    TextWrapping="Wrap"
+                                                    Width="70"
+                                                    PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
+                                                    MaxLength="2"
+                                                    LostFocus="TextBoxPT1_LostFocus"
+                                                    PreviewKeyDown="HighestScorePT1_PreviewKeyDown"/>
+                                                    <!-- TextChanged="WrittenScoresTextChanged" -->
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                        <Border
+                            x:Name="bdHighestWW_2"
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                            Visibility="Collapsed">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>  
+                                <StackPanel>
+                                    <TextBox Text="Written Works" FontWeight="Bold" FontSize="16"/>
+                                </StackPanel>
+                                <ItemsControl
+                                    Grid.Row="1"
+                                    AlternationCount="1000"
+                                    Margin="4"
+                                    ItemsSource="{Binding HighestWW_2}">   
+
+                                    <!-- Change ItemsPanel to UniformGrid -->
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="2" Columns="5"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical" 
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="5"
+                                                    >                                                
+                                                <TextBlock Text="{Binding
+                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                AncestorType=ContentPresenter},
+                                                    Path=(ItemsControl.AlternationIndex),
+                                                    Converter={StaticResource IndexToActivityLabelConverter}}"
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                    Path=(ItemsControl.AlternationIndex)}"
+                                                    />                                                            
+
+                                                <TextBox
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                            Path=(ItemsControl.AlternationIndex)}"
+                                                    Text="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    VerticalAlignment="Top"
+                                                    AcceptsReturn="True"                 
+                                                    TextWrapping="Wrap"
+                                                    Width="70"
+                                                    PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
+                                                    MaxLength="2"
+                                                    LostFocus="TextBoxWW2_LostFocus"
+                                                    PreviewKeyDown="HighestScoreWW2_PreviewKeyDown"/>
+                                                    
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                        <Border
+                            x:Name="bdHighestPT_2"
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                            Visibility="Collapsed">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel>
+                                    <TextBox Text="Performance Tasks" FontWeight="Bold" FontSize="16"/>
+                                </StackPanel>
+                                <ItemsControl
+                                    Grid.Row="1"
+                                    AlternationCount="1000"
+                                    Margin="4"
+                                    ItemsSource="{Binding HighestPT_2}">   
+
+                                    <!-- Change ItemsPanel to UniformGrid -->
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Rows="2" Columns="5"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical" 
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    Margin="5"
+                                                    >                                                
+                                                <TextBlock Text="{Binding
+                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                AncestorType=ContentPresenter},
+                                                    Path=(ItemsControl.AlternationIndex),
+                                                    Converter={StaticResource IndexToActivityLabelConverter}}"
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                    Path=(ItemsControl.AlternationIndex)}"
+                                                    />                                                            
+
+                                                <TextBox
+                                                    Tag="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, 
+                                                            Path=(ItemsControl.AlternationIndex)}"
+                                                    Text="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    VerticalAlignment="Top"
+                                                    AcceptsReturn="True"                 
+                                                    TextWrapping="Wrap"
+                                                    Width="70"
+                                                    PreviewTextInput="NumberOnlyTextBox_PreviewTextInput"
+                                                    MaxLength="2"
+                                                    LostFocus="TextBoxPT2_LostFocus"
+                                                    PreviewKeyDown="HighestScorePT2_PreviewKeyDown"/>
+                                                    
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="tabStudents" Height="42">
+                <TabItem.Header> 
+                    <TextBlock Text="Students" FontSize="16"/> 
+                </TabItem.Header>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>                        
+                    <DockPanel Grid.Row="0" LastChildFill="False"> 
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ui:AutoSuggestBox
+                                    x:Name="controlsSearchBox"
+                                    Width="200"                                    
+                                    Margin="12"
+                                    PlaceholderText="Search"
+                                    QueryIcon="Find" 
+                                    TextChanged="TxtSearchAll_TextChanged"/>
+                            
+                            <ui:ToggleSwitch IsOn="True" 
+                                OnContent="Grades"
+                                OffContent="Grades"
+                                Toggled="GradeSwitch_Toggled"
+                                Margin="10"/> 
+                        </StackPanel>
+                        <!-- <TextBox x:Name="txtSearchAll"
+                                Width="200"
+                                TextChanged="TxtSearchAll_TextChanged"
+                                DockPanel.Dock="Left" 
+                                Margin="10"
+                                PlaceholderText="Search"> 
+                                <TextBox.Icon> 
+                                    <FontIcon Glyph="&#xE721;" />
+                                </TextBox.Icon> 
+                        </TextBox>  -->
+                                                    
+                        <ui:ToggleSwitch x:Name="tsSQuarter"
+                                IsOn="True" 
+                                OnContent="1st"
+                                OffContent="2nd"
+                                Toggled="QuarterSwitch_Toggled"
+                                DockPanel.Dock="Right" 
+                                Margin="10"/> 
+                    </DockPanel>
+                    <UniformGrid Grid.Row="1" Rows="2" >
+                        <Border
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <DataGrid   x:Name="dgMale"
+                                        ItemsSource="{Binding Males}"                                              
+                                        AutoGenerateColumns="False"
+                                        HeadersVisibility="Column"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                        CellEditEnding="MyDataGrid_CellEditEnding"
+                                        ColumnWidth="*">
+                                <DataGrid.Resources> 
+                                    <Style TargetType="DataGridCell"> 
+                                        <EventSetter Event="MouseDoubleClick" Handler="Cell_DoubleClick"/> 
+                                    </Style> 
+                                </DataGrid.Resources>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Male" Binding="{Binding Name, Mode=OneWay}" Width="Auto"> 
+                                        <DataGridTextColumn.HeaderStyle> 
+                                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.HeaderStyle> 
+                                        <DataGridTextColumn.CellStyle> 
+                                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DefaultDataGridCellStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.CellStyle> 
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn x:Name="mWW1" Header="WW" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="mColWW1_1" Header="WW1" Binding="{Binding WW1_1}" />
+                                    <DataGridTextColumn x:Name="mColWW2_1" Header="WW2" Binding="{Binding WW2_1}" />
+                                    <DataGridTextColumn x:Name="mColWW3_1" Header="WW3" Binding="{Binding WW3_1}" />
+                                    <DataGridTextColumn x:Name="mColWW4_1" Header="WW4" Binding="{Binding WW4_1}" />
+                                    <DataGridTextColumn x:Name="mColWW5_1" Header="WW5" Binding="{Binding WW5_1}" />
+                                    <DataGridTextColumn x:Name="mColWW6_1" Header="WW6" Binding="{Binding WW6_1}" />
+                                    <DataGridTextColumn x:Name="mColWW7_1" Header="WW7" Binding="{Binding WW7_1}" />
+                                    <DataGridTextColumn x:Name="mColWW8_1" Header="WW8" Binding="{Binding WW8_1}" />
+                                    <DataGridTextColumn x:Name="mColWW9_1" Header="WW9" Binding="{Binding WW9_1}" />
+                                    <DataGridTextColumn x:Name="mColWW10_1" Header="WW10" Binding="{Binding WW10_1}" />
+
+                                    <DataGridTextColumn x:Name="mPT1" Header="PT" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="mColPT1_1" Header="PT1" Binding="{Binding PT1_1}" />
+                                    <DataGridTextColumn x:Name="mColPT2_1" Header="PT2" Binding="{Binding PT2_1}" />
+                                    <DataGridTextColumn x:Name="mColPT3_1" Header="PT3" Binding="{Binding PT3_1}" />
+                                    <DataGridTextColumn x:Name="mColPT4_1" Header="PT4" Binding="{Binding PT4_1}" />
+                                    <DataGridTextColumn x:Name="mColPT5_1" Header="PT5" Binding="{Binding PT5_1}" />
+                                    <DataGridTextColumn x:Name="mColPT6_1" Header="PT6" Binding="{Binding PT6_1}" />
+                                    <DataGridTextColumn x:Name="mColPT7_1" Header="PT7" Binding="{Binding PT7_1}" />
+                                    <DataGridTextColumn x:Name="mColPT8_1" Header="PT8" Binding="{Binding PT8_1}" />
+                                    <DataGridTextColumn x:Name="mColPT9_1" Header="PT9" Binding="{Binding PT9_1}" />
+                                    <DataGridTextColumn x:Name="mColPT10_1" Header="PT10" Binding="{Binding PT10_1}" />
+
+                                    <DataGridTextColumn x:Name="mE1" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="mColExam_1" Header="Exam" Binding="{Binding EX_1}" />
+                                    <DataGridTextColumn x:Name="mColGrade_1" Header="Grade" Binding="{Binding Transmuted_1, Mode=OneWay}" />
+
+                                    <DataGridTextColumn x:Name="mWW2" Header="WW" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="mColWW1_2" Header="WW1" Binding="{Binding WW1_2}" />
+                                    <DataGridTextColumn x:Name="mColWW2_2" Header="WW2" Binding="{Binding WW2_2}" />
+                                    <DataGridTextColumn x:Name="mColWW3_2" Header="WW3" Binding="{Binding WW3_2}" />
+                                    <DataGridTextColumn x:Name="mColWW4_2" Header="WW4" Binding="{Binding WW4_2}" />
+                                    <DataGridTextColumn x:Name="mColWW5_2" Header="WW5" Binding="{Binding WW5_2}" />
+                                    <DataGridTextColumn x:Name="mColWW6_2" Header="WW6" Binding="{Binding WW6_2}" />
+                                    <DataGridTextColumn x:Name="mColWW7_2" Header="WW7" Binding="{Binding WW7_2}" />
+                                    <DataGridTextColumn x:Name="mColWW8_2" Header="WW8" Binding="{Binding WW8_2}" />
+                                    <DataGridTextColumn x:Name="mColWW9_2" Header="WW9" Binding="{Binding WW9_2}" />
+                                    <DataGridTextColumn x:Name="mColWW10_2" Header="WW10" Binding="{Binding WW10_2}" />
+
+                                    <DataGridTextColumn x:Name="mPT2" Header="PT" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="mColPT1_2" Header="PT1" Binding="{Binding PT1_2}" />
+                                    <DataGridTextColumn x:Name="mColPT2_2" Header="PT2" Binding="{Binding PT2_2}" />
+                                    <DataGridTextColumn x:Name="mColPT3_2" Header="PT3" Binding="{Binding PT3_2}" />
+                                    <DataGridTextColumn x:Name="mColPT4_2" Header="PT4" Binding="{Binding PT4_2}" />
+                                    <DataGridTextColumn x:Name="mColPT5_2" Header="PT5" Binding="{Binding PT5_2}" />
+                                    <DataGridTextColumn x:Name="mColPT6_2" Header="PT6" Binding="{Binding PT6_2}" />
+                                    <DataGridTextColumn x:Name="mColPT7_2" Header="PT7" Binding="{Binding PT7_2}" />
+                                    <DataGridTextColumn x:Name="mColPT8_2" Header="PT8" Binding="{Binding PT8_2}" />
+                                    <DataGridTextColumn x:Name="mColPT9_2" Header="PT9" Binding="{Binding PT9_2}" />
+                                    <DataGridTextColumn x:Name="mColPT10_2" Header="PT10" Binding="{Binding PT10_2}" />
+                                    
+                                    <DataGridTextColumn x:Name="mE2" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="mColExam_2" Header="Exam _2" Binding="{Binding EX_2}" />
+                                    <DataGridTextColumn x:Name="mColGrade_2" Header="Grade" Binding="{Binding Transmuted_2, Mode=OneWay}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                        <Border
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <DataGrid   x:Name="dgFemale"                                    
+                                ItemsSource="{Binding Females}"                                      
+                                AutoGenerateColumns="False"
+                                HeadersVisibility="Column"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                CellEditEnding="MyDataGrid_CellEditEnding"
+                                ColumnWidth="*">
+                                <DataGrid.Resources> 
+                                    <Style TargetType="DataGridCell"> 
+                                        <EventSetter Event="MouseDoubleClick" Handler="Cell_DoubleClick"/> 
+                                    </Style> 
+                                </DataGrid.Resources>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Female" Binding="{Binding Name, Mode=OneWay}" Width="Auto"> 
+                                        <DataGridTextColumn.HeaderStyle> 
+                                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.HeaderStyle>
+                                        <DataGridTextColumn.CellStyle> 
+                                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DefaultDataGridCellStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.CellStyle> 
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn x:Name="fWW1" Header="WW" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="fColWW1_1" Header="WW1" Binding="{Binding WW1_1}" />
+                                    <DataGridTextColumn x:Name="fColWW2_1" Header="WW2" Binding="{Binding WW2_1}" />
+                                    <DataGridTextColumn x:Name="fColWW3_1" Header="WW3" Binding="{Binding WW3_1}" />
+                                    <DataGridTextColumn x:Name="fColWW4_1" Header="WW4" Binding="{Binding WW4_1}" />
+                                    <DataGridTextColumn x:Name="fColWW5_1" Header="WW5" Binding="{Binding WW5_1}" />
+                                    <DataGridTextColumn x:Name="fColWW6_1" Header="WW6" Binding="{Binding WW6_1}" />
+                                    <DataGridTextColumn x:Name="fColWW7_1" Header="WW7" Binding="{Binding WW7_1}" />
+                                    <DataGridTextColumn x:Name="fColWW8_1" Header="WW8" Binding="{Binding WW8_1}" />
+                                    <DataGridTextColumn x:Name="fColWW9_1" Header="WW9" Binding="{Binding WW9_1}" />
+                                    <DataGridTextColumn x:Name="fColWW10_1" Header="WW10" Binding="{Binding WW10_1}" />
+
+                                    <DataGridTextColumn x:Name="fPT1" Header="PT" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="fColPT1_1" Header="PT1" Binding="{Binding PT1_1}" />
+                                    <DataGridTextColumn x:Name="fColPT2_1" Header="PT2" Binding="{Binding PT2_1}" />
+                                    <DataGridTextColumn x:Name="fColPT3_1" Header="PT3" Binding="{Binding PT3_1}" />
+                                    <DataGridTextColumn x:Name="fColPT4_1" Header="PT4" Binding="{Binding PT4_1}" />
+                                    <DataGridTextColumn x:Name="fColPT5_1" Header="PT5" Binding="{Binding PT5_1}" />
+                                    <DataGridTextColumn x:Name="fColPT6_1" Header="PT6" Binding="{Binding PT6_1}" />
+                                    <DataGridTextColumn x:Name="fColPT7_1" Header="PT7" Binding="{Binding PT7_1}" />
+                                    <DataGridTextColumn x:Name="fColPT8_1" Header="PT8" Binding="{Binding PT8_1}" />
+                                    <DataGridTextColumn x:Name="fColPT9_1" Header="PT9" Binding="{Binding PT9_1}" />
+                                    <DataGridTextColumn x:Name="fColPT10_1" Header="PT10" Binding="{Binding PT10_1}" />
+
+                                    <DataGridTextColumn x:Name="fE1" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="fColExam_1" Header="Exam" Binding="{Binding EX_1}" />
+                                    <DataGridTextColumn x:Name="fColGrade_1" Header="Grade" Binding="{Binding Transmuted_1, Mode=OneWay}" />
+
+                                    <DataGridTextColumn x:Name="fWW2" Header="WW" IsReadOnly="True" Width="SizeToHeader"/> 
+                                    <DataGridTextColumn x:Name="fColWW1_2" Header="WW1" Binding="{Binding WW1_2}" />
+                                    <DataGridTextColumn x:Name="fColWW2_2" Header="WW2" Binding="{Binding WW2_2}" />
+                                    <DataGridTextColumn x:Name="fColWW3_2" Header="WW3" Binding="{Binding WW3_2}" />
+                                    <DataGridTextColumn x:Name="fColWW4_2" Header="WW4" Binding="{Binding WW4_2}" />
+                                    <DataGridTextColumn x:Name="fColWW5_2" Header="WW5" Binding="{Binding WW5_2}" />
+                                    <DataGridTextColumn x:Name="fColWW6_2" Header="WW6" Binding="{Binding WW6_2}" />
+                                    <DataGridTextColumn x:Name="fColWW7_2" Header="WW7" Binding="{Binding WW7_2}" />
+                                    <DataGridTextColumn x:Name="fColWW8_2" Header="WW8" Binding="{Binding WW8_2}" />
+                                    <DataGridTextColumn x:Name="fColWW9_2" Header="WW9" Binding="{Binding WW9_2}" />
+                                    <DataGridTextColumn x:Name="fColWW10_2" Header="WW10" Binding="{Binding WW10_2}" />
+
+                                    <DataGridTextColumn x:Name="fPT2" Header="PT" IsReadOnly="True" Width="SizeToHeader"/> 
+                                    <DataGridTextColumn x:Name="fColPT1_2" Header="PT1" Binding="{Binding PT1_2}" />
+                                    <DataGridTextColumn x:Name="fColPT2_2" Header="PT2" Binding="{Binding PT2_2}" />
+                                    <DataGridTextColumn x:Name="fColPT3_2" Header="PT3" Binding="{Binding PT3_2}" />
+                                    <DataGridTextColumn x:Name="fColPT4_2" Header="PT4" Binding="{Binding PT4_2}" />
+                                    <DataGridTextColumn x:Name="fColPT5_2" Header="PT5" Binding="{Binding PT5_2}" />
+                                    <DataGridTextColumn x:Name="fColPT6_2" Header="PT6" Binding="{Binding PT6_2}" />
+                                    <DataGridTextColumn x:Name="fColPT7_2" Header="PT7" Binding="{Binding PT7_2}" />
+                                    <DataGridTextColumn x:Name="fColPT8_2" Header="PT8" Binding="{Binding PT8_2}" />
+                                    <DataGridTextColumn x:Name="fColPT9_2" Header="PT9" Binding="{Binding PT9_2}" />
+                                    <DataGridTextColumn x:Name="fColPT10_2" Header="PT10" Binding="{Binding PT10_2}" />
+
+                                    <DataGridTextColumn x:Name="fE2" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
+                                    <DataGridTextColumn x:Name="fColExam_2" Header="Exam _2" Binding="{Binding EX_2}" />
+                                    <DataGridTextColumn x:Name="fColGrade_2" Header="Grade" Binding="{Binding Transmuted_2, Mode=OneWay}" />
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
