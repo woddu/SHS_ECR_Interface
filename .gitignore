@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /WpfApplication1/icons/appicon.ico
+
+publish.bat
