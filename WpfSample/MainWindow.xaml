@@ -10,10 +10,22 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         WindowStartupLocation="CenterScreen"
         ui:WindowHelper.UseModernWindowStyle="True"
-        Icon="pack://application:,,,/icons/appico.ico">
-        <Window.Resources>            
+        Icon="pack://application:,,,/icons/appico.ico"
+        KeyDown="Window_KeyDown">
+        <Window.Resources>  
+            <local:LessThanPercentageOfHeaderConverter x:Key="LessThanPercentageOfHeaderConverter"/>              
             <local:IndexToActivityLabelConverter x:Key="IndexToActivityLabelConverter" />            
             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}"> <Setter Property="HorizontalContentAlignment" Value="Center"/> <Setter Property="VerticalContentAlignment" Value="Center"/> </Style>
+            <Style TargetType="DataGridCell" x:Key="ThresholdCellStyle">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <Binding Path="WW1_1"
+                                Converter="{StaticResource LessThanPercentageOfHeaderConverter}"
+                                ConverterParameter="10"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </Window.Resources>
     <Grid>
         <Grid.RowDefinitions> 
@@ -26,7 +38,7 @@
             VerticalAlignment="Top" 
             Margin="10"/>
         
-        <TabControl Grid.Row="1" TabStripPlacement="Left">
+        <TabControl x:Name="MainTab" Grid.Row="1" TabStripPlacement="Left">
             <TabItem Height="42">
 
                 <TabItem.Header> 
@@ -407,13 +419,9 @@
                                 <DataGrid.Resources> 
                                     <Style TargetType="DataGridCell"> 
                                         <EventSetter Event="MouseDoubleClick" Handler="Cell_DoubleClick"/> 
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
                                     </Style> 
                                 </DataGrid.Resources>
-                                <DataGrid.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
-                                    </Style>
-                                </DataGrid.CellStyle>
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Male" Binding="{Binding Name, Mode=OneWay}" Width="Auto"> 
                                         <DataGridTextColumn.HeaderStyle> 
@@ -455,7 +463,7 @@
                                     <DataGridTextColumn x:Name="mColPT10_1" Header="PT10" Binding="{Binding PT10_1}" />
 
                                     <DataGridTextColumn x:Name="mE1" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
-                                    <DataGridTextColumn x:Name="mColExam_1" Header="Exam" Binding="{Binding EX_1}" />
+                                    <DataGridTextColumn x:Name="mColExam_1" Header="Exam" Binding="{Binding EX_1}" Visibility="Collapsed"/>
                                     <DataGridTextColumn x:Name="mColGrade_1" Header="Grade" Binding="{Binding Transmuted_1, Mode=OneWay}" />
 
                                     <DataGridTextColumn x:Name="mWW2" Header="WW" IsReadOnly="True" Width="SizeToHeader"/>
@@ -482,8 +490,8 @@
                                     <DataGridTextColumn x:Name="mColPT9_2" Header="PT9" Binding="{Binding PT9_2}" />
                                     <DataGridTextColumn x:Name="mColPT10_2" Header="PT10" Binding="{Binding PT10_2}" />
                                     
-                                    <DataGridTextColumn x:Name="mE2" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
-                                    <DataGridTextColumn x:Name="mColExam_2" Header="Exam _2" Binding="{Binding EX_2}" />
+                                    <DataGridTextColumn x:Name="mE2" Header="Exam" IsReadOnly="True" Width="SizeToHeader" Visibility="Collapsed"/>
+                                    <DataGridTextColumn x:Name="mColExam_2" Header="Exam _2" Binding="{Binding EX_2}" Visibility="Collapsed"/>
                                     <DataGridTextColumn x:Name="mColGrade_2" Header="Grade" Binding="{Binding Transmuted_2, Mode=OneWay}" />
                                 </DataGrid.Columns>
                             </DataGrid>
@@ -505,13 +513,9 @@
                                 <DataGrid.Resources> 
                                     <Style TargetType="DataGridCell"> 
                                         <EventSetter Event="MouseDoubleClick" Handler="Cell_DoubleClick"/> 
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
                                     </Style> 
                                 </DataGrid.Resources>
-                                <DataGrid.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
-                                    </Style>
-                                </DataGrid.CellStyle>
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Female" Binding="{Binding Name, Mode=OneWay}" Width="Auto"> 
                                         <DataGridTextColumn.HeaderStyle> 
@@ -553,7 +557,7 @@
                                     <DataGridTextColumn x:Name="fColPT10_1" Header="PT10" Binding="{Binding PT10_1}" />
 
                                     <DataGridTextColumn x:Name="fE1" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
-                                    <DataGridTextColumn x:Name="fColExam_1" Header="Exam" Binding="{Binding EX_1}" />
+                                    <DataGridTextColumn x:Name="fColExam_1" Header="Exam" Binding="{Binding EX_1}" Visibility="Collapsed"/>
                                     <DataGridTextColumn x:Name="fColGrade_1" Header="Grade" Binding="{Binding Transmuted_1, Mode=OneWay}" />
 
                                     <DataGridTextColumn x:Name="fWW2" Header="WW" IsReadOnly="True" Width="SizeToHeader"/> 
@@ -580,8 +584,8 @@
                                     <DataGridTextColumn x:Name="fColPT9_2" Header="PT9" Binding="{Binding PT9_2}" />
                                     <DataGridTextColumn x:Name="fColPT10_2" Header="PT10" Binding="{Binding PT10_2}" />
 
-                                    <DataGridTextColumn x:Name="fE2" Header="Exam" IsReadOnly="True" Width="SizeToHeader"/>
-                                    <DataGridTextColumn x:Name="fColExam_2" Header="Exam _2" Binding="{Binding EX_2}" />
+                                    <DataGridTextColumn x:Name="fE2" Header="Exam" IsReadOnly="True" Width="SizeToHeader" Visibility="Collapsed"/>
+                                    <DataGridTextColumn x:Name="fColExam_2" Header="Exam _2" Binding="{Binding EX_2}" Visibility="Collapsed"/>
                                     <DataGridTextColumn x:Name="fColGrade_2" Header="Grade" Binding="{Binding Transmuted_2, Mode=OneWay}" />
 
                                 </DataGrid.Columns>
