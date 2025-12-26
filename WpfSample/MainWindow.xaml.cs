@@ -107,6 +107,16 @@ namespace WpfSample {
 
       maleView = CollectionViewSource.GetDefaultView(Males); 
       femaleView = CollectionViewSource.GetDefaultView(Females);
+      dgMale.MouseDoubleClick += Cell_DoubleClick;
+      dgFemale.MouseDoubleClick += Cell_DoubleClick;
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e) {
+      if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F) {        
+        if (MainTab.SelectedItem == tabStudents) {
+          controlsSearchBox.Focus();
+        }
+      }
     }
 
     private async void ShowError(string message) {
@@ -436,16 +446,17 @@ namespace WpfSample {
     }
 
     private void Cell_DoubleClick(object sender, MouseButtonEventArgs e) {
-      if (sender is not DataGridCell cell) return;
-      
-      var column = cell?.Column;
-      var rowData = cell?.DataContext;
+      if (e.OriginalSource is FrameworkElement fe && fe.Parent is DataGridCell cell) {        
+        
+        var column = cell?.Column;
+        var rowData = cell?.DataContext;
 
-      if (column == null || rowData == null) return;
+        if (column == null || rowData == null) return;
 
-      if (column.Header.ToString() == "Male" || column.Header.ToString() == "Female") {
-        ShowError($"Double-clicked Age cell: {((StudentWithScores)rowData).Name}");
-      }
+        if (column.Header.ToString() == "Male" || column.Header.ToString() == "Female") {
+          ShowError($"Double-clicked Age cell: {((StudentWithScores)rowData).Name}");
+        }
+      }      
     } 
 
 
@@ -666,13 +677,13 @@ namespace WpfSample {
             : Visibility.Collapsed;
       }
 
-      SafeVisibilityToggle(mColExam_1);
+      if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(mColExam_1);
       SafeVisibilityToggle(mE1);
-      SafeVisibilityToggle(mColExam_2, false);
+      if (!string.IsNullOrWhiteSpace(HighestExam_2)) SafeVisibilityToggle(mColExam_2, false);
       SafeVisibilityToggle(mE2, false);
-      SafeVisibilityToggle(fColExam_1);
+      if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(fColExam_1);
       SafeVisibilityToggle(fE1);
-      SafeVisibilityToggle(fColExam_2, false);
+      if (!string.IsNullOrWhiteSpace(HighestExam_2)) SafeVisibilityToggle(fColExam_2, false);
       SafeVisibilityToggle(fE2, false);
 
       SafeVisibilityToggle(mColGrade_1, true, true);
@@ -717,27 +728,62 @@ namespace WpfSample {
 
     private void SetColumnsToHighestScores() {
       for (int i = 0; i < mWWSet1Columns.Length; i++) {
-        mWWSet1Columns[i].Header = $"{HighestWW_1[i]}";
-        fWWSet1Columns[i].Header = $"{HighestWW_1[i]}";
+        string headerValue = HighestWW_1[i];
+        mWWSet1Columns[i].Header = headerValue;
+        fWWSet1Columns[i].Header = headerValue;
+      
+        ApplyThresholdStyle(mWWSet1Columns[i], headerValue, "WW" + (i+1) + "_1");
+        ApplyThresholdStyle(fWWSet1Columns[i], headerValue, "WW" + (i+1) + "_1");
       }
 
       for (int i = 0; i < mPTSet1Columns.Length; i++) {
-        mPTSet1Columns[i].Header = $"{HighestPT_1[i]}";
-        fPTSet1Columns[i].Header = $"{HighestPT_1[i]}";
+        string headerValue = HighestPT_1[i]; 
+        mPTSet1Columns[i].Header = headerValue; 
+        fPTSet1Columns[i].Header = headerValue; 
+        
+        ApplyThresholdStyle(mPTSet1Columns[i], headerValue, "PT" + (i+1) + "_1"); 
+        ApplyThresholdStyle(fPTSet1Columns[i], headerValue, "PT" + (i+1) + "_1");
       }
 
       for (int i = 0; i < mWWSet2Columns.Length; i++) {
-        mWWSet2Columns[i].Header = $"{HighestWW_2[i]}";
-        fWWSet2Columns[i].Header = $"{HighestWW_2[i]}";
+        string headerValue = HighestWW_2[i];
+        mWWSet2Columns[i].Header = headerValue;
+        fWWSet2Columns[i].Header = headerValue;
+
+        ApplyThresholdStyle(mWWSet2Columns[i], headerValue, "WW" + (i+1) + "_2");
+        ApplyThresholdStyle(fWWSet2Columns[i], headerValue, "WW" + (i+1) + "_2");
       }
 
       for (int i = 0; i < mPTSet2Columns.Length; i++) {
-        mPTSet2Columns[i].Header = $"{HighestPT_2[i]}";
-        fPTSet2Columns[i].Header = $"{HighestPT_2[i]}";
-      }       
+        string headerValue = HighestPT_2[i];
+        mPTSet2Columns[i].Header = headerValue;
+        fPTSet2Columns[i].Header = headerValue;
+
+        ApplyThresholdStyle(mPTSet2Columns[i], headerValue, "PT" + (i+1) + "_2");
+        ApplyThresholdStyle(fPTSet2Columns[i], headerValue, "PT" + (i+1) + "_2");
+      }
+      ApplyThresholdStyle(mColExam_1, HighestExam_1, "EX_1");
+      ApplyThresholdStyle(fColExam_1, HighestExam_1, "EX_1");
+      ApplyThresholdStyle(mColExam_2, HighestExam_2, "EX_2");
+      ApplyThresholdStyle(fColExam_2, HighestExam_2, "EX_2");       
       SetGridColumnsVisibility();
     }
 
+    private static void ApplyThresholdStyle(DataGridTextColumn column, string headerValue, string bindingPath) {
+      var baseStyle = (Style)Application.Current.Resources["ThresholdCellStyle"];
+      var style = new Style(typeof(DataGridCell), baseStyle);
+      style.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+      style.Setters.Add(new Setter(DataGridCell.BackgroundProperty,
+          new Binding(bindingPath)
+          {
+              Converter = new LessThanPercentageOfHeaderConverter(),
+              ConverterParameter = headerValue
+          }));
+
+      // style.EventSetters.Add(new EventSetter(DataGridCell.MouseDoubleClickEvent, new MouseButtonEventHandler(Cell_DoubleClick)));    
+
+      column.CellStyle = style;
+    }
 
     private void SafeVisibilityToggle(DataGridColumn column, bool quarter1 = true, bool showGrades = false) {
       if (column == null) return;
