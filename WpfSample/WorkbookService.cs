@@ -2,7 +2,6 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace WpfSample;
@@ -689,11 +688,11 @@ public class WorkbookService {
   }
 
   public int GetComputedGrade(
-    List<string> WrittenWorks, 
-    List<string> PerformanceTasks, 
+    List<string> WrittenWorks,
+    List<string> PerformanceTasks,
     string Exam,
-    List<string> writtenWorksScores, 
-    List<string> performanceTaskScores, 
+    List<string> writtenWorksScores,
+    List<string> performanceTaskScores,
     string examScore
   ) {
 
@@ -729,7 +728,7 @@ public class WorkbookService {
     double examWeightedScore = examPercentageScore * weightedScores[trackIndex, 2];
 
     double initialGrade = wwWeightedScore + ptWeightedScore + examWeightedScore;
-
+    initialGrade = Math.Round(initialGrade, 2);
     return GetTransmutedGrade(initialGrade, gradeTable);
   }
 
