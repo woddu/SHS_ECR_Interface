@@ -372,11 +372,12 @@
                                     x:Name="controlsSearchBox"
                                     Width="200"                                    
                                     Margin="12"
-                                    PlaceholderText="Search"
+                                    PlaceholderText="Search Student"
                                     QueryIcon="Find" 
-                                    TextChanged="TxtSearchAll_TextChanged"/>
+                                    TextChanged="TxtSearchAll_TextChanged"
+                                    ToolTip="Shortcut Key: Ctrl+F"/>
                             
-                            <ui:ToggleSwitch IsOn="True" 
+                            <ui:ToggleSwitch IsOn="False" 
                                 OnContent="Grades"
                                 OffContent="Grades"
                                 Toggled="GradeSwitch_Toggled"
