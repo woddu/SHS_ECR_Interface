@@ -54,7 +54,7 @@ namespace WpfSample {
     public ObservableCollection<StudentWithScores> Females { get; } = new();
 
     public bool Quarter1 { get; set; } = true;
-    public bool ShowGrades { get; set; } = true;
+    public bool ShowGrades { get; set; } = false;
 
     // WW columns
     private DataGridTextColumn[] mWWSet1Columns = [];
@@ -468,6 +468,7 @@ namespace WpfSample {
 
       if (newValue < 0) return;
 
+      if (e.Column == null) return;
 
       var rowData = e.Row.Item;
       var binding = (e.Column as DataGridBoundColumn)?.Binding as Binding; 
@@ -503,22 +504,29 @@ namespace WpfSample {
           if (res.IsFailure) {
             tb.Text = oldValue?.ToString(); 
             ShowError(res.Error);
+            return;
           }
+          
         } else if (scoreType == "PT" && numberSucces) {
           var res = _workbookService.SetStudentScore(((StudentWithScores)rowData).Row, number, tb.Text, ScoreType.PerformanceTasks, quarter == "1");
           if (res.IsFailure) {
             tb.Text = oldValue?.ToString(); 
             ShowError(res.Error);
+            return;
           }
+          
         } else if (scoreType == "EX" && !numberSucces) {
           var res = _workbookService.SetStudentScore(((StudentWithScores)rowData).Row, 0, tb.Text, ScoreType.Exam, quarter == "1");
           if (res.IsFailure) {
             tb.Text = oldValue?.ToString(); 
             ShowError(res.Error);
+            return;
           }
+          
         }
         rowData.GetType().GetProperty(propertyName)?.SetValue(rowData, tb.Text);
-        
+        ApplyThresholdStyle(e.Column as DataGridTextColumn, header.ToString(), propertyName);
+        ApplyThresholdStyle(e.Column as DataGridTextColumn, header.ToString(), propertyName);
         ComputeTransmutedScores(rowData as StudentWithScores);
         // ShowError($"Old value: {oldValue}, New value: {newValue}, Property: {propertyName}, Property Type: {propInfo?.PropertyType}"); 
       }
@@ -678,13 +686,13 @@ namespace WpfSample {
       }
 
       if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(mColExam_1);
-      SafeVisibilityToggle(mE1);
+      if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(mE1);
       if (!string.IsNullOrWhiteSpace(HighestExam_2)) SafeVisibilityToggle(mColExam_2, false);
-      SafeVisibilityToggle(mE2, false);
+      if (!string.IsNullOrWhiteSpace(HighestExam_2)) SafeVisibilityToggle(mE2, false);
       if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(fColExam_1);
-      SafeVisibilityToggle(fE1);
+      if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(fE1);
       if (!string.IsNullOrWhiteSpace(HighestExam_2)) SafeVisibilityToggle(fColExam_2, false);
-      SafeVisibilityToggle(fE2, false);
+      if (!string.IsNullOrWhiteSpace(HighestExam_2)) SafeVisibilityToggle(fE2, false);
 
       SafeVisibilityToggle(mColGrade_1, true, true);
       SafeVisibilityToggle(mColGrade_2, false, true);
@@ -708,22 +716,25 @@ namespace WpfSample {
     }
 
     private void ComputeTransmutedScores(StudentWithScores s) {
-      s.Transmuted_1 = _workbookService.GetComputedGrade(
+      var transmuted1 = _workbookService.GetComputedGrade(
         HighestWW_1.ToList(), 
         HighestPT_1.ToList(),
         HighestExam_1,
         [s.WW1_1, s.WW2_1, s.WW3_1, s.WW4_1, s.WW5_1, s.WW6_1, s.WW7_1, s.WW8_1, s.WW9_1, s.WW10_1],
         [s.PT1_1, s.PT2_1, s.PT3_1, s.PT4_1, s.PT5_1, s.PT6_1, s.PT7_1, s.PT8_1, s.PT9_1, s.PT10_1],
         s.EX_1
-      ).ToString();
-      s.Transmuted_2 = _workbookService.GetComputedGrade(
+      );
+      s.Transmuted_1 = transmuted1 <= 60 ? "" : transmuted1.ToString();
+
+      var transmuted_2 = _workbookService.GetComputedGrade(
         HighestWW_2.ToList(), 
         HighestPT_2.ToList(),
         HighestExam_2,
         [s.WW1_2, s.WW2_2, s.WW3_2, s.WW4_2, s.WW5_2, s.WW6_2, s.WW7_2, s.WW8_2, s.WW9_2, s.WW10_2],
         [s.PT1_2, s.PT2_2, s.PT3_2, s.PT4_2, s.PT5_2, s.PT6_2, s.PT7_2, s.PT8_2, s.PT9_2, s.PT10_2],
         s.EX_2
-      ).ToString();
+      );
+      s.Transmuted_2 = transmuted_2 <= 60 ? "" : transmuted_2.ToString();
     }
 
     private void SetColumnsToHighestScores() {
