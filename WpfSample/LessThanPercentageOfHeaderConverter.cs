@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -8,7 +7,6 @@ namespace WpfSample;
 
 public class LessThanPercentageOfHeaderConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-        Debug.WriteLine($"Converter called: value={value ?? "null"} ({value?.GetType().Name}), parameter={parameter ?? "null"}");
         if (value is string cellValue && 
             parameter is string headerStr && 
             double.TryParse(headerStr, out double headerVal)) {
