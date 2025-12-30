@@ -699,24 +699,20 @@ public class WorkbookService {
     int trackIndex = Array.IndexOf(tracks, Track);
 
     double writtenWorksTotal = WrittenWorks
-        .Select(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0)
-        .Sum();
+        .Sum(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0);
 
     double wwPercentageScore = writtenWorksTotal > 0
         ? writtenWorksScores
-            .Select(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0)
-            .Sum() / writtenWorksTotal * 100.0
+            .Sum(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0) / writtenWorksTotal * 100.0
         : 0;
 
     double wwWeightedScore = wwPercentageScore * weightedScores[trackIndex, 0];
 
     double performanceTasksTotal = PerformanceTasks
-        .Select(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0)
-        .Sum();
+        .Sum(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0);
     double ptPercentageScore = performanceTasksTotal > 0
         ? performanceTaskScores
-            .Select(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0)
-            .Sum() / performanceTasksTotal * 100.0
+            .Sum(s => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0) / performanceTasksTotal * 100.0
         : 0;
     double ptWeightedScore = ptPercentageScore * weightedScores[trackIndex, 1];
 
@@ -731,7 +727,6 @@ public class WorkbookService {
     initialGrade = Math.Round(initialGrade, 2);
     return GetTransmutedGrade(initialGrade, gradeTable);
   }
-
 
   private string? ReadCellValue(WorksheetPart wsPart, string cellRef) {
     var cell = wsPart.Worksheet.Descendants<Cell>()
