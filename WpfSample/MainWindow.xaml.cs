@@ -77,8 +77,11 @@ namespace WpfSample {
       // this.Closed += (s, e) => _workbookService.Dispose(); 
       tabHighestScores.Visibility = Visibility.Hidden;
       tabStudents.Visibility = Visibility.Hidden;
+      tabFinalSemestralGrades.Visibility = Visibility.Hidden;
       tabHighestScores.IsEnabled = false;
       tabStudents.IsEnabled = false;
+      tabFinalSemestralGrades.IsEnabled = false;
+      tabStudentDetails.IsEnabled = false;
 
       mWWSet1Columns = [
         mColWW1_1, mColWW2_1, mColWW3_1, mColWW4_1, mColWW5_1, mColWW6_1, mColWW7_1, mColWW8_1, mColWW9_1, mColWW10_1
@@ -109,6 +112,12 @@ namespace WpfSample {
       femaleView = CollectionViewSource.GetDefaultView(Females);
       dgMale.MouseDoubleClick += Cell_DoubleClick;
       dgFemale.MouseDoubleClick += Cell_DoubleClick;
+    }
+
+    private void StudentDetails(StudentWithScores student) {
+      txtStudentName.Text = student.Name;
+      
+      Dispatcher.BeginInvoke((Action)(() => MainTab.SelectedIndex = 4));
     }
 
     private void Window_KeyDown(object sender, KeyEventArgs e) {
@@ -399,27 +408,6 @@ namespace WpfSample {
       femaleView.Refresh();
     }
 
-
-    /* private void TxtSearchAll_TextChanged(object sender, TextChangedEventArgs e) {
-      var tb = sender as TextBox; 
-      if (tb == null) return;
-      string filterText = tb.Text; 
-      maleView.Filter = item => {
-        if (string.IsNullOrEmpty(filterText)) return true; 
-        var student = item as StudentWithScores; 
-        if (student == null || string.IsNullOrEmpty(student.Name)) return false; 
-        return student.Name.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0;
-      }; 
-      maleView.Refresh(); 
-      femaleView.Filter = item => {
-        if (string.IsNullOrEmpty(filterText)) return true; 
-        var student = item as StudentWithScores; 
-        if (student == null || string.IsNullOrEmpty(student.Name)) return false; 
-        return student.Name.IndexOf(filterText, StringComparison.OrdinalIgnoreCase) >= 0;
-      }; 
-      femaleView.Refresh(); 
-    } */
-
     private void NumberOnlyTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e) => 
       e.Handled = !int.TryParse(e.Text, out _);    
 
@@ -454,7 +442,7 @@ namespace WpfSample {
         if (column == null || rowData == null) return;
 
         if (column.Header.ToString() == "Male" || column.Header.ToString() == "Female") {
-          ShowError($"Double-clicked Age cell: {((StudentWithScores)rowData).Name}");
+          StudentDetails((StudentWithScores)rowData);
         }
       }      
     } 
@@ -570,7 +558,6 @@ namespace WpfSample {
           return;
         }
 
-
         HighestWW_1.Clear();
         HighestPT_1.Clear();
         HighestWW_2.Clear();
@@ -637,8 +624,10 @@ namespace WpfSample {
 
         tabHighestScores.Visibility = Visibility.Visible;
         tabStudents.Visibility = Visibility.Visible;
+        tabFinalSemestralGrades.Visibility = Visibility.Visible;
         tabHighestScores.IsEnabled = true;
         tabStudents.IsEnabled = true;
+        tabFinalSemestralGrades.IsEnabled = true;
 
         SetColumnsToHighestScores();
       }
@@ -658,31 +647,31 @@ namespace WpfSample {
 
       for (int i = 0; i < mPTSet1Columns.Length; i++) {
         mPTSet1Columns[i].Visibility = Quarter1 && !string.IsNullOrWhiteSpace(HighestPT_1[i])
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+          ? Visibility.Visible
+          : Visibility.Collapsed;
         fPTSet1Columns[i].Visibility = Quarter1 && !string.IsNullOrWhiteSpace(HighestPT_1[i])
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+          ? Visibility.Visible
+          : Visibility.Collapsed;
       }
 
 
       for (int i = 0; i < mWWSet2Columns.Length; i++) {
         mWWSet2Columns[i].Visibility = !Quarter1 && !string.IsNullOrWhiteSpace(HighestWW_2[i])
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+          ? Visibility.Visible
+          : Visibility.Collapsed;
         fWWSet2Columns[i].Visibility = !Quarter1 && !string.IsNullOrWhiteSpace(HighestWW_2[i])
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+          ? Visibility.Visible
+          : Visibility.Collapsed;
       }
 
 
       for (int i = 0; i < mPTSet2Columns.Length; i++) {
         mPTSet2Columns[i].Visibility = !Quarter1 && !string.IsNullOrWhiteSpace(HighestPT_2[i])
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+          ? Visibility.Visible
+          : Visibility.Collapsed;
         fPTSet2Columns[i].Visibility = !Quarter1 && !string.IsNullOrWhiteSpace(HighestPT_2[i])
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+          ? Visibility.Visible
+          : Visibility.Collapsed;
       }
 
       if (!string.IsNullOrWhiteSpace(HighestExam_1)) SafeVisibilityToggle(mColExam_1);
