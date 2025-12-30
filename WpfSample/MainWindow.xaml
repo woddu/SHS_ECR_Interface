@@ -38,7 +38,7 @@
             VerticalAlignment="Top" 
             Margin="10"/>
         
-        <TabControl x:Name="MainTab" Grid.Row="1" TabStripPlacement="Left">
+        <TabControl x:Name="MainTab" Grid.Row="1" TabStripPlacement="Left" SelectedIndex="0">
             <TabItem Height="42">
 
                 <TabItem.Header> 
@@ -58,7 +58,7 @@
                         Margin="10"/>
                 </StackPanel>
             </TabItem>
-
+            
             <TabItem x:Name="tabHighestScores"  Height="42">
                 <TabItem.Header> 
                     <TextBlock Text="Highest Scores" FontSize="16"/> 
@@ -595,6 +595,32 @@
                     </UniformGrid>
                 </Grid>
             </TabItem>
+        
+            <TabItem x:Name="tabFinalSemestralGrades"  Height="42">
+                <TabItem.Header> 
+                    <TextBlock Text="Final Semestral Grades" FontSize="16"/> 
+                </TabItem.Header>
+
+            </TabItem>
+
+            <TabItem x:Name="tabStudentDetails">
+                <TabItem.Header> <TextBlock Visibility="Collapsed"/> </TabItem.Header>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock  
+                        Text="Student Details" 
+                        TextAlignment="Center"
+                        FontSize="28"/>
+
+                    <TextBlock  
+                        x:Name="txtStudentName" 
+                        Text=""
+                        TextAlignment="Center"
+                        FontSize="24"
+                        Margin="10"/>
+
+                </StackPanel>
+            </TabItem>                
+
         </TabControl>
     </Grid>
 </Window>
