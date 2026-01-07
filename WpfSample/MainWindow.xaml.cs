@@ -110,8 +110,10 @@ namespace WpfSample {
 
       maleView = CollectionViewSource.GetDefaultView(Males); 
       femaleView = CollectionViewSource.GetDefaultView(Females);
-      dgMale.MouseDoubleClick += Cell_DoubleClick;
-      dgFemale.MouseDoubleClick += Cell_DoubleClick;
+      dgStudentsMale.MouseDoubleClick += Cell_DoubleClick;
+      dgStudentsFemale.MouseDoubleClick += Cell_DoubleClick;
+      dgFinalGradesMale.MouseDoubleClick += Cell_DoubleClick;
+      dgFinalGradesFemale.MouseDoubleClick += Cell_DoubleClick;
     }
 
     private void StudentDetails(StudentWithScores student) {
@@ -123,7 +125,9 @@ namespace WpfSample {
     private void Window_KeyDown(object sender, KeyEventArgs e) {
       if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F) {        
         if (MainTab.SelectedItem == tabStudents) {
-          controlsSearchBox.Focus();
+          studentsSearchBox.Focus();
+        } else if (MainTab.SelectedItem == tabFinalSemestralGrades) {
+          finalGradeSearchBox.Focus();
         }
       }
     }
