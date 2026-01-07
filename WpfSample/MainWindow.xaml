@@ -369,7 +369,7 @@
                     <DockPanel Grid.Row="0" LastChildFill="False"> 
                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
                             <ui:AutoSuggestBox
-                                    x:Name="controlsSearchBox"
+                                    x:Name="studentsSearchBox"
                                     Width="200"                                    
                                     Margin="12"
                                     PlaceholderText="Search Student"
@@ -408,7 +408,7 @@
                             Margin="5"
                             CornerRadius="4"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
-                            <DataGrid   x:Name="dgMale"
+                            <DataGrid   x:Name="dgStudentsMale"
                                         ItemsSource="{Binding Males}"                                              
                                         AutoGenerateColumns="False"
                                         HeadersVisibility="Column"
@@ -502,7 +502,7 @@
                             Margin="5"
                             CornerRadius="4"
                             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
-                            <DataGrid   x:Name="dgFemale"                                    
+                            <DataGrid   x:Name="dgStudentsFemale"                                    
                                 ItemsSource="{Binding Females}"                                      
                                 AutoGenerateColumns="False"
                                 HeadersVisibility="Column"
@@ -594,6 +594,7 @@
                         </Border>
                     </UniformGrid>
                 </Grid>
+            
             </TabItem>
         
             <TabItem x:Name="tabFinalSemestralGrades"  Height="42">
@@ -601,6 +602,133 @@
                     <TextBlock Text="Final Semestral Grades" FontSize="16"/> 
                 </TabItem.Header>
 
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>                        
+                    <DockPanel Grid.Row="0" LastChildFill="False"> 
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ui:AutoSuggestBox
+                                    x:Name="finalGradeSearchBox"
+                                    Width="200"                                    
+                                    Margin="12"
+                                    PlaceholderText="Search Student"
+                                    QueryIcon="Find" 
+                                    TextChanged="TxtSearchAll_TextChanged"
+                                    ToolTip="Shortcut Key: Ctrl+F"/>
+                            
+                            <ui:ToggleSwitch IsOn="False" 
+                                OnContent="Grades"
+                                OffContent="Grades"
+                                Toggled="GradeSwitch_Toggled"
+                                Margin="10"/> 
+                        </StackPanel>
+                        <!-- <TextBox x:Name="txtSearchAll"
+                                Width="200"
+                                TextChanged="TxtSearchAll_TextChanged"
+                                DockPanel.Dock="Left" 
+                                Margin="10"
+                                PlaceholderText="Search"> 
+                                <TextBox.Icon> 
+                                    <FontIcon Glyph="&#xE721;" />
+                                </TextBox.Icon> 
+                        </TextBox>  -->
+                                                    
+                        <!-- <ui:ToggleSwitch x:Name="tsSQuarter"
+                                IsOn="True" 
+                                OnContent="1st"
+                                OffContent="2nd"
+                                Toggled="QuarterSwitch_Toggled"
+                                DockPanel.Dock="Right" 
+                                Margin="10"/>  -->
+                    </DockPanel>
+                    <UniformGrid Grid.Row="1" Rows="2" >
+                        <Border
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <DataGrid   x:Name="dgFinalGradesMale"
+                                        ItemsSource="{Binding Males}"                                              
+                                        AutoGenerateColumns="False"
+                                        HeadersVisibility="Column"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                        CellEditEnding="MyDataGrid_CellEditEnding"
+                                        ColumnWidth="*">
+                                <DataGrid.Resources> 
+                                    <Style TargetType="DataGridCell"> 
+                                        <EventSetter Event="MouseDoubleClick" Handler="Cell_DoubleClick"/> 
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                    </Style> 
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Male" Binding="{Binding Name, Mode=OneWay}" Width="Auto"> 
+                                        <DataGridTextColumn.HeaderStyle> 
+                                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.HeaderStyle> 
+                                        <DataGridTextColumn.CellStyle> 
+                                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DefaultDataGridCellStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.CellStyle> 
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn x:Name="mFinalGradesColGrade_1" Header="1st" Binding="{Binding Transmuted_1, Mode=OneWay}" />
+                                    <DataGridTextColumn x:Name="mFinalGradesColGrade_2" Header="2nd" Binding="{Binding Transmuted_2, Mode=OneWay}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                        <Border
+                            BorderThickness="2"
+                            Margin="5"
+                            CornerRadius="4"
+                            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <DataGrid   x:Name="dgFinalGradesFemale"                                    
+                                ItemsSource="{Binding Females}"                                      
+                                AutoGenerateColumns="False"
+                                HeadersVisibility="Column"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                CellEditEnding="MyDataGrid_CellEditEnding"
+                                ColumnWidth="*">
+                                <DataGrid.Resources> 
+                                    <Style TargetType="DataGridCell"> 
+                                        <EventSetter Event="MouseDoubleClick" Handler="Cell_DoubleClick"/> 
+                                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                                    </Style> 
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Female" Binding="{Binding Name, Mode=OneWay}" Width="Auto"> 
+                                        <DataGridTextColumn.HeaderStyle> 
+                                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.HeaderStyle>
+                                        <DataGridTextColumn.CellStyle> 
+                                            <Style TargetType="DataGridCell" BasedOn="{StaticResource DefaultDataGridCellStyle}"> 
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/> 
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/> 
+                                            </Style> 
+                                        </DataGridTextColumn.CellStyle> 
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn x:Name="fFinalGradesColGrade_1" Header="1st" Binding="{Binding Transmuted_1, Mode=OneWay}" />
+                                    <DataGridTextColumn x:Name="fFinalGradesColGrade_2" Header="2nd" Binding="{Binding Transmuted_2, Mode=OneWay}" />
+
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
             </TabItem>
 
             <TabItem x:Name="tabStudentDetails">
